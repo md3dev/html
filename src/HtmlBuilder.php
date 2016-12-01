@@ -1,6 +1,6 @@
 <?php
 
-namespace Collective\Html;
+namespace Md3dev\Html;
 
 use BadMethodCallException;
 use Illuminate\Support\HtmlString;
@@ -288,7 +288,7 @@ class HtmlBuilder
     {
         return str_repeat('&nbsp;', $num);
     }
-    
+
     /**
      * Generate an ordered list of items.
      *

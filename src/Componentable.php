@@ -1,6 +1,6 @@
 <?php
 
-namespace Collective\Html;
+namespace Md3dev\Html;
 
 use BadMethodCallException;
 use Illuminate\Support\HtmlString;

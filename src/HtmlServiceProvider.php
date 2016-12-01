@@ -1,6 +1,6 @@
 <?php
 
-namespace Collective\Html;
+namespace Md3dev\Html;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -25,8 +25,8 @@ class HtmlServiceProvider extends ServiceProvider
 
         $this->registerFormBuilder();
 
-        $this->app->alias('html', 'Collective\Html\HtmlBuilder');
-        $this->app->alias('form', 'Collective\Html\FormBuilder');
+        $this->app->alias('html', 'Md3dev\Html\HtmlBuilder');
+        $this->app->alias('form', 'Md3dev\Html\FormBuilder');
     }
 
     /**
@@ -62,6 +62,6 @@ class HtmlServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['html', 'form', 'Collective\Html\HtmlBuilder', 'Collective\Html\FormBuilder'];
+        return ['html', 'form', 'Md3dev\Html\HtmlBuilder', 'Md3dev\Html\FormBuilder'];
     }
 }

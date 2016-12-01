@@ -1,11 +1,11 @@
 <?php
 
-namespace Collective\Html;
+namespace Md3dev\Html;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Collective\Html\FormBuilder
+ * @see \Md3dev\Html\FormBuilder
  */
 class FormFacade extends Facade
 {

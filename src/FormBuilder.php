@@ -1,6 +1,6 @@
 <?php
 
-namespace Collective\Html;
+namespace Md3dev\Html;
 
 use DateTime;
 use BadMethodCallException;
@@ -21,7 +21,7 @@ class FormBuilder
     /**
      * The HTML builder instance.
      *
-     * @var \Collective\Html\HtmlBuilder
+     * @var \Md3dev\Html\HtmlBuilder
      */
     protected $html;
 
@@ -91,7 +91,7 @@ class FormBuilder
     /**
      * Create a new form builder instance.
      *
-     * @param  \Collective\Html\HtmlBuilder               $html
+     * @param  \Md3dev\Html\HtmlBuilder               $html
      * @param  \Illuminate\Contracts\Routing\UrlGenerator $url
      * @param  \Illuminate\Contracts\View\Factory         $view
      * @param  string                                     $csrfToken

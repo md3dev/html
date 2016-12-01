@@ -1,6 +1,6 @@
 <?php
 
-namespace Collective\Html\Eloquent;
+namespace Md3dev\Html\Eloquent;
 
 use ReflectionClass;
 use ReflectionMethod;
