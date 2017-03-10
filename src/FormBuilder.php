@@ -2,6 +2,7 @@
 
 namespace Md3dev\Html;
 
+use Str;
 use DateTime;
 use BadMethodCallException;
 use Illuminate\Support\Collection;
@@ -238,6 +239,9 @@ class FormBuilder
      */
     protected function formatLabel($name, $value)
     {
+        if (strpos($name, '.') !== false) {
+            list($tmp, $name) = explode('.', $name);
+        }
         return $value ?: ucwords(str_replace('_', ' ', $name));
     }
 
@@ -254,7 +258,7 @@ class FormBuilder
     public function input($type, $name, $value = null, $options = [])
     {
         if (! isset($options['name'])) {
-            $options['name'] = $name;
+            $options['name'] = $this->getNameAttribute($name);
         }
 
         // We will get the appropriate value for the given field. We will look for the
@@ -263,7 +267,7 @@ class FormBuilder
         $id = $this->getIdAttribute($name, $options);
 
         if (! in_array($type, $this->skipValueTypes)) {
-            $value = $this->getValueAttribute($name, $value);
+            $value = $this->getValueAttribute($options['name'], $value);
         }
 
         // Once we have the type, value, and ID we can merge them into the rest of the
@@ -273,7 +277,17 @@ class FormBuilder
 
         $options = array_merge($options, $merge);
 
-        return $this->toHtmlString('<input' . $this->html->attributes($options) . '>');
+        $html = $this->toHtmlString('<input' . $this->html->attributes($options) . '>');
+        if (empty($options['front']) && empty($options['back'])) return $html;
+        if (empty($options['front']) == false) {
+            $html = '<span class="input-group-addon">'.$options['front'].'</span>'.$html;
+            unset($options['front']);
+        }
+        if (empty($options['back']) == false) {
+            $html = $html.'<span class="input-group-addon">'.$options['back'].'</span>';
+            unset($options['back']);
+        }
+        return '<div class="input-group">'.$html.'</div>';
     }
 
     /**
@@ -287,6 +301,7 @@ class FormBuilder
      */
     public function text($name, $value = null, $options = [])
     {
+        $options = array_set($options, 'class', 'form-control '.array_get($options, 'class'));
         return $this->input('text', $name, $value, $options);
     }
 
@@ -300,6 +315,7 @@ class FormBuilder
      */
     public function password($name, $options = [])
     {
+        $options = array_set($options, 'class', 'form-control '.array_get($options, 'class'));
         return $this->input('password', $name, '', $options);
     }
 
@@ -328,6 +344,7 @@ class FormBuilder
      */
     public function email($name, $value = null, $options = [])
     {
+        $options = array_set($options, 'class', 'form-control '.array_get($options, 'class'));
         return $this->input('email', $name, $value, $options);
     }
 
@@ -342,6 +359,7 @@ class FormBuilder
      */
     public function tel($name, $value = null, $options = [])
     {
+        $options = array_set($options, 'class', 'form-control '.array_get($options, 'class'));
         return $this->input('tel', $name, $value, $options);
     }
 
@@ -356,6 +374,7 @@ class FormBuilder
      */
     public function number($name, $value = null, $options = [])
     {
+        $options = array_set($options, 'class', 'form-control '.array_get($options, 'class'));
         return $this->input('number', $name, $value, $options);
     }
 
@@ -374,6 +393,7 @@ class FormBuilder
             $value = $value->format('Y-m-d');
         }
 
+        $options = array_set($options, 'class', 'form-control '.array_get($options, 'class'));
         return $this->input('date', $name, $value, $options);
     }
 
@@ -392,6 +412,7 @@ class FormBuilder
             $value = $value->format(DateTime::RFC3339);
         }
 
+        $options = array_set($options, 'class', 'form-control '.array_get($options, 'class'));
         return $this->input('datetime', $name, $value, $options);
     }
 
@@ -410,6 +431,7 @@ class FormBuilder
             $value = $value->format('Y-m-d\TH:i');
         }
 
+        $options = array_set($options, 'class', 'form-control '.array_get($options, 'class'));
         return $this->input('datetime-local', $name, $value, $options);
     }
 
@@ -424,6 +446,7 @@ class FormBuilder
      */
     public function time($name, $value = null, $options = [])
     {
+        $options = array_set($options, 'class', 'form-control '.array_get($options, 'class'));
         return $this->input('time', $name, $value, $options);
     }
 
@@ -438,6 +461,7 @@ class FormBuilder
      */
     public function url($name, $value = null, $options = [])
     {
+        $options = array_set($options, 'class', 'form-control '.array_get($options, 'class'));
         return $this->input('url', $name, $value, $options);
     }
 
@@ -451,6 +475,7 @@ class FormBuilder
      */
     public function file($name, $options = [])
     {
+        $options = array_set($options, 'class', 'form-control '.array_get($options, 'class'));
         return $this->input('file', $name, null, $options);
     }
 
@@ -466,8 +491,10 @@ class FormBuilder
     public function textarea($name, $value = null, $options = [])
     {
         if (! isset($options['name'])) {
-            $options['name'] = $name;
+            $options['name'] = $this->getNameAttribute($name);
         }
+
+        $options = array_set($options, 'class', 'form-control '.array_get($options, 'class'));
 
         // Next we will look for the rows and cols attributes, as each of these are put
         // on the textarea element definition. If they are not present, we will just
@@ -544,8 +571,10 @@ class FormBuilder
 
         $options['id'] = $this->getIdAttribute($name, $options);
 
+        $options = array_set($options, 'class', 'form-control '.array_get($options, 'class'));
+
         if (! isset($options['name'])) {
-            $options['name'] = $name;
+            $options['name'] = $this->getNameAttribute($name);
         }
 
         // We will simply loop through the options and build an HTML value for each of
@@ -558,8 +587,10 @@ class FormBuilder
             unset($options['placeholder']);
         }
 
-        foreach ($list as $value => $display) {
-            $html[] = $this->getSelectOption($display, $value, $selected);
+        if (is_array($list)) {
+            foreach ($list as $value => $display) {
+                $html[] = $this->getSelectOption($display, $value, $selected);
+            }
         }
 
         // Once we have all of this HTML, we can join this into a single element after
@@ -745,11 +776,28 @@ class FormBuilder
      */
     public function radio($name, $value = null, $checked = null, $options = [])
     {
-        if (is_null($value)) {
-            $value = $name;
+        if (is_array($value)) {
+            $checked = $this->getValueAttribute($name, $checked);
+            $class = 'btn-default';
+            if (empty($options['class']) == false) {
+                $class = $options['class'];
+                unset($options['class']);
+            }
+            $result = false;
+            $result[] = '<div class="btn-group btn-group-justified" data-toggle="buttons">';
+            foreach ($value as $key => $val) {
+                $result[] = '<label class="btn '.$class.' '.($key == $checked ? 'active' : '').'">';
+                $result[] = $this->radio($name, $key, (bool)($key == $checked), $options).'&nbsp;'.$val;
+                $result[] = '</label>';
+            }
+            $result[] = '</div>';
+            return implode('', $result);
+        } else {
+            if (is_null($value)) {
+                $value = $name;
+            }
+            return $this->checkable('radio', $name, $value, $checked, $options);
         }
-
-        return $this->checkable('radio', $name, $value, $checked, $options);
     }
 
     /**
@@ -868,7 +916,8 @@ class FormBuilder
      */
     public function reset($value, $attributes = [])
     {
-        return $this->input('reset', null, $value, $attributes);
+        $options['type'] = 'reset';
+        return $this->button($value, $options);
     }
 
     /**
@@ -911,7 +960,8 @@ class FormBuilder
      */
     public function submit($value = null, $options = [])
     {
-        return $this->input('submit', null, $value, $options);
+        $options['type'] = 'submit';
+        return $this->button($value, $options);
     }
 
     /**
@@ -928,6 +978,13 @@ class FormBuilder
             $options['type'] = 'button';
         }
 
+        $options = array_set($options, 'class', 'btn '.array_get($options, 'class'));
+
+        if (isset($options['icon'])) {
+            $value = trim(app('html')->icon($options['icon']).' '.$value);
+            unset($options['icon']);
+        }
+
         return $this->toHtmlString('<button' . $this->html->attributes($options) . '>' . $value . '</button>');
     }
 
@@ -940,9 +997,9 @@ class FormBuilder
      */
     protected function getMethod($method)
     {
-        $method = strtoupper($method);
+        $method = strtolower($method);
 
-        return $method != 'GET' ? 'POST' : $method;
+        return $method != 'get' ? 'post' : $method;
     }
 
     /**
@@ -1065,9 +1122,32 @@ class FormBuilder
             return $attributes['id'];
         }
 
-        if (in_array($name, $this->labels)) {
-            return $name;
+        if (strpos($name, '.') !== false) {
+            $name = explode(' ', str_replace(['.', '_', '-'], ' ', $name));
+            foreach ($name as $i => $val) {
+                if ($i == 0) continue;
+                $name[$i] = Str::title($val);
+            }
+            return implode('', $name);
         }
+    }
+
+    /**
+     * Get the Name attribute for a field name.
+     *
+     * @param  string  $name
+     * @return string
+     */
+    public function getNameAttribute($name)
+    {
+        if (strpos($name, '.') === false) return $name;
+
+        $field_list = explode('.', $name);
+        $name = array_shift($field_list);
+        foreach ($field_list as $field) {
+            $name .= '['.$field.']';
+        }
+        return $name;
     }
 
     /**
@@ -1122,6 +1202,9 @@ class FormBuilder
      */
     public function old($name)
     {
+        if (strpos($name, '.') !== false) {
+            $name = $this->getNameAttribute($name);
+        }
         if (isset($this->session)) {
             return $this->session->getOldInput($this->transformKey($name));
         }
