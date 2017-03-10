@@ -150,7 +150,7 @@ class HtmlBuilder
      *
      * @return \Illuminate\Support\HtmlString
      */
-    public function link($url, $title = null, $attributes = [], $secure = null, $escape = true)
+    public function link($title, $url, $attributes = [], $secure = null, $escape = true)
     {
         $url = $this->url->to($url, [], $secure);
 
@@ -160,6 +160,11 @@ class HtmlBuilder
 
         if ($escape) {
             $title = $this->entities($title);
+        }
+
+        if (isset($attributes['icon'])) {
+            $title = trim($this->icon($attributes['icon']).' '.$title);
+            unset($attributes['icon']);
         }
 
         return $this->toHtmlString('<a href="' . $url . '"' . $this->attributes($attributes) . '>' . $title . '</a>');
@@ -408,6 +413,20 @@ class HtmlBuilder
             return '<li>' . $key . $this->listing($type, $value) . '</li>';
         }
     }
+
+    /**
+     * Create a icon html
+     *
+     * @param  string  $type
+     * @param  string  $attribute
+     * @return string
+     */
+    public function icon($type, $class = null, $attributes = false)
+    {
+        $icon = env('ICON', 'fa');
+        return '<i class="'.$icon.' '.$icon.'-' . $type . ' ' . $class . '" '.$this->attributes($attributes).'></i>';
+    }
+
 
     /**
      * Build an HTML attribute string from an array.
